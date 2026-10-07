@@ -24,6 +24,7 @@ class ActionModel:
         self.moves: dict[GameAction, Counter] = defaultdict(Counter)  # action -> Counter[(dx, dy)]
         self.nothing: Counter = Counter()  # action -> times it changed nothing
         self.player_votes: Counter = Counter()  # color -> times an object of that color moved
+        self.last_seen: dict[int, tuple[int, int]] = {}  # color -> where an object of it last moved to
 
     def learn(self, action: Action, prev: Observation, obs: Observation, perception) -> str | None:
         if action.game_action.is_complex():
@@ -34,9 +35,10 @@ class ActionModel:
         moved = _moved_objects(prev.objects, obs.objects)
         if not moved:
             return "changed, nothing moved"
-        for color, dx, dy in moved:
+        for color, dx, dy, center in moved:
             self.player_votes[color] += 1
-        _, dx, dy = moved[0]
+            self.last_seen[color] = center
+        _, dx, dy, _ = moved[0]
         self.moves[action.game_action][(dx, dy)] += 1
         return f"color {moved[0][0]} moved by ({dx},{dy})"
 
@@ -54,7 +56,11 @@ class ActionModel:
         if color is None:
             return None
         matches = [o for o in obs.objects if o.color == color]
-        return max(matches, key=lambda o: o.size) if matches else None
+        if not matches:
+            return None
+        # Same-colored decorations (e.g. a HUD icon) exist; pick the one nearest where the player last moved.
+        x, y = self.last_seen[color]
+        return min(matches, key=lambda o: abs(o.center[0] - x) + abs(o.center[1] - y))
 
     def describe(self, available: list[GameAction]) -> list[str]:
         lines = []
@@ -76,7 +82,7 @@ class ActionModel:
         return lines
 
 
-def _moved_objects(before: list[Obj], after: list[Obj]) -> list[tuple[int, int, int]]:
+def _moved_objects(before: list[Obj], after: list[Obj]) -> list[tuple[int, int, int, tuple[int, int]]]:
     """Objects with the same color+size in both frames whose center shifted."""
     if len(before) > MAX_OBJECTS_TO_MATCH or len(after) > MAX_OBJECTS_TO_MATCH:
         return []
@@ -89,7 +95,7 @@ def _moved_objects(before: list[Obj], after: list[Obj]) -> list[tuple[int, int, 
         if len(candidates) != 1 or candidates[0].center == o.center:
             continue
         n = candidates[0]
-        moved.append((o.color, n.center[0] - o.center[0], n.center[1] - o.center[1]))
+        moved.append((o.color, n.center[0] - o.center[0], n.center[1] - o.center[1], n.center))
     return moved
 
 

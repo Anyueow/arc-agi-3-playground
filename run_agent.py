@@ -1,6 +1,7 @@
 """Run an agent on one game, several, or all of them.
 
     uv run python run_agent.py                         # explorer on ls20, offline
+    uv run python run_agent.py --agent llm -n 200      # LLM brain (Ollama, default llama3.1:8b)
     uv run python run_agent.py --game all -n 500       # every downloaded game, scoreboard at the end
     uv run python run_agent.py --game ls20,vc33,ft09   # a few games
     uv run python run_agent.py --agent random -n 300
@@ -28,8 +29,10 @@ from statistics import mean
 import arc_agi
 from arc_agi.base import OperationMode
 
-from agents import AGENTS, run_game
-from agents.trace import Tracer
+from agents import AGENTS
+from agents.core.ollama import DEFAULT_MODEL, Ollama
+from agents.core.runner import run_game
+from agents.core.trace import Tracer
 
 
 def main() -> None:
@@ -44,6 +47,7 @@ def main() -> None:
     parser.add_argument("--online", action="store_true", help="use the ARC API instead of local game files")
     parser.add_argument("--render", action="store_true", help="draw frames in the terminal")
     parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("--model", default=DEFAULT_MODEL, help="Ollama model for the llm agent")
     parser.add_argument("--trace", action="store_true", help="write step-by-step logs to logs/ (see/learn/decide)")
     args = parser.parse_args()
 
@@ -55,6 +59,8 @@ def main() -> None:
         if args.game == "all"
         else args.game.split(",")
     )
+    if args.agent == "llm":
+        Ollama(args.model).check()
     seeds = list(range(args.seed, args.seed + args.seeds))
 
     results = {
@@ -73,7 +79,7 @@ def main() -> None:
                 break
             info = env.environment_info
             print(f"\n=== {game} ({', '.join(info.tags or ['no tags'])}) seed {seed} ===")
-            agent = AGENTS[args.agent](seed=seed)
+            agent = AGENTS[args.agent](seed=seed, model=args.model)
             tracer = Tracer(game, args.agent) if args.trace else None
             result = run_game(env, agent, args.max_actions, verbose=args.verbose, tracer=tracer)
             if tracer:

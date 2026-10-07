@@ -48,6 +48,7 @@ class Observation:
     levels_completed: int
     available: list[GameAction]
     key: str  # hash that identifies this game state (HUD pixels masked out)
+    win_levels: int = 0
 
     @cached_property
     def objects(self) -> list[Obj]:

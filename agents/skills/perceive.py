@@ -40,6 +40,7 @@ class Perception:
             levels_completed=raw.levels_completed,
             available=[GameAction.from_id(a) for a in raw.available_actions],
             key=self.key(grid),
+            win_levels=raw.win_levels,
         )
 
     def key(self, grid: np.ndarray) -> str:

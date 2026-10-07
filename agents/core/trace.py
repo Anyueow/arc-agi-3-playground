@@ -53,9 +53,14 @@ def _format(r: dict) -> str:
         lines.append(f"      LEARN  {learn['event']}: {learn.get('move', '')}" + (f"  [{extra}]" if extra else ""))
     if decide:
         lines.append(
-            f"      DECIDE {decide['reason']} -> {decide['action']}  "
-            f"({decide['untried_left']}/{decide['candidates']} untried here, plan {decide['plan_left']} left)"
+            f"      DECIDE {decide['reason']} -> {decide['action']}" + (f"  [skill {decide['skill']}]" if decide.get("skill") else "")
         )
+    if think := r.get("think"):
+        lines.append(f"      THINK  {think.get('skill', '')}  <- {think.get('thought', '')}")
+        if think.get("notes"):
+            lines.append(f"             notes: {think['notes']}")
+        if think.get("error"):
+            lines.append(f"             error: {think['error']}")
     if know:
         lines.append(
             f"      KNOW   {know['states']} states, life {know['life_moves']} moves, "

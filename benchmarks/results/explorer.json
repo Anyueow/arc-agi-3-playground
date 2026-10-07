@@ -1,0 +1,202 @@
+{
+  "agent": "explorer",
+  "label": "explorer",
+  "model": null,
+  "max_actions": 300,
+  "seeds": [
+    0
+  ],
+  "created": "2026-10-07T00:32:21+00:00",
+  "games": {
+    "ls20": {
+      "tags": [
+        "keyboard"
+      ],
+      "win_levels": 7,
+      "human_baseline_actions": [
+        22,
+        123,
+        73,
+        84,
+        96,
+        192,
+        186
+      ],
+      "mean_score": 0.0,
+      "mean_levels": 0,
+      "runs": [
+        {
+          "seed": 0,
+          "levels_completed": 0,
+          "win_levels": 7,
+          "actions": 300,
+          "resets": 2,
+          "final_state": "NOT_FINISHED",
+          "score": 0.0,
+          "level_actions": [
+            300,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "vc33": {
+      "tags": [
+        "click"
+      ],
+      "win_levels": 7,
+      "human_baseline_actions": [
+        7,
+        18,
+        44,
+        61,
+        131,
+        34,
+        152
+      ],
+      "mean_score": 0.19444444444444445,
+      "mean_levels": 1,
+      "runs": [
+        {
+          "seed": 0,
+          "levels_completed": 1,
+          "win_levels": 7,
+          "actions": 300,
+          "resets": 5,
+          "final_state": "NOT_FINISHED",
+          "score": 0.19444444444444445,
+          "level_actions": [
+            30,
+            270,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "r11l": {
+      "tags": [
+        "click"
+      ],
+      "win_levels": 6,
+      "human_baseline_actions": [
+        22,
+        33,
+        51,
+        26,
+        52,
+        49
+      ],
+      "mean_score": 1.3710659754681171,
+      "mean_levels": 1,
+      "runs": [
+        {
+          "seed": 0,
+          "levels_completed": 1,
+          "win_levels": 6,
+          "actions": 300,
+          "resets": 6,
+          "final_state": "NOT_FINISHED",
+          "score": 1.3710659754681171,
+          "level_actions": [
+            41,
+            259,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "sp80": {
+      "tags": [
+        "keyboard_click"
+      ],
+      "win_levels": 6,
+      "human_baseline_actions": [
+        39,
+        58,
+        25,
+        148,
+        96,
+        152
+      ],
+      "mean_score": 0.3492890211640211,
+      "mean_levels": 1,
+      "runs": [
+        {
+          "seed": 0,
+          "levels_completed": 1,
+          "win_levels": 6,
+          "actions": 300,
+          "resets": 7,
+          "final_state": "NOT_FINISHED",
+          "score": 0.3492890211640211,
+          "level_actions": [
+            144,
+            156,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "tu93": {
+      "tags": [
+        "keyboard_click"
+      ],
+      "win_levels": 9,
+      "human_baseline_actions": [
+        19,
+        16,
+        34,
+        42,
+        123,
+        80,
+        14,
+        23,
+        111
+      ],
+      "mean_score": 0.0,
+      "mean_levels": 0,
+      "runs": [
+        {
+          "seed": 0,
+          "levels_completed": 0,
+          "win_levels": 9,
+          "actions": 300,
+          "resets": 6,
+          "final_state": "NOT_FINISHED",
+          "score": 0.0,
+          "level_actions": [
+            300,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  },
+  "summary": {
+    "overall_score": 0.38295988821531657,
+    "games_with_progress": 3,
+    "games": 5
+  }
+}

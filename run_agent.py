@@ -48,6 +48,7 @@ def main() -> None:
     parser.add_argument("--render", action="store_true", help="draw frames in the terminal")
     parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("--model", default=DEFAULT_MODEL, help="Ollama model for the llm agent")
+    parser.add_argument("--label", help="name shown in the dashboard (default: agent or llm:<model>)")
     parser.add_argument("--trace", action="store_true", help="write step-by-step logs to logs/ (see/learn/decide)")
     args = parser.parse_args()
 
@@ -65,6 +66,8 @@ def main() -> None:
 
     results = {
         "agent": args.agent,
+        "label": args.label or (f"llm:{args.model}" if args.agent == "llm" else args.agent),
+        "model": args.model if args.agent == "llm" else None,
         "max_actions": args.max_actions,
         "seeds": seeds,
         "created": datetime.now(timezone.utc).isoformat(timespec="seconds"),

@@ -25,7 +25,8 @@ class Tracer:
         self._text = self.text_path.open("w")
 
     def write(self, record: dict, grid_before: np.ndarray | None) -> None:
-        self._jsonl.write(json.dumps(record, default=str) + "\n")
+        grid = grid_before.tolist() if grid_before is not None else None
+        self._jsonl.write(json.dumps(record | {"grid": grid}, default=str) + "\n")
         self._text.write(_format(record))
         event = record.get("learn", {}).get("event")
         if grid_before is not None and event in SNAPSHOT_EVENTS:

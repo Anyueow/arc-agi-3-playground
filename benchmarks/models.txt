@@ -1,0 +1,7 @@
+# Ollama models to benchmark with the LLM brain, one per line.
+# Add a model here (after `ollama pull <model>`), then run `uv run python benchmark.py`.
+# Results land in benchmarks/results/ and show up in the dashboard next to the random control.
+llama3.1:8b
+# mistral:latest
+# gpt-oss:20b
+# qwen2.5:32b   (19 GB; probably too big for a 16 GB machine)

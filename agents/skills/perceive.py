@@ -13,7 +13,7 @@ from collections import Counter, deque
 import numpy as np
 from arcengine import FrameDataRaw, GameAction
 
-from .types import Obj, Observation
+from ..core.types import Obj, Observation
 
 MAX_HUD_LINES = 8  # a HUD is a thin strip; anything bigger is probably gameplay
 HUD_THRESHOLD = 0.9  # changes on >=90% of actions (not 100%: animations can skip a tick)

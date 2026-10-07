@@ -15,7 +15,7 @@ from dataclasses import dataclass, field
 import numpy as np
 from arcengine import GameAction, GameState
 
-from .types import Action, Observation
+from ..core.types import Action, Observation
 
 TIMER_TOLERANCE = 3  # lives within this many moves of each other => a fixed energy budget
 STALL_WINDOW = 150  # this many actions without a new state => stalled

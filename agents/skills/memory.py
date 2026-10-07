@@ -8,7 +8,7 @@ again to know what it does, and it can plan routes through known states.
 
 from collections import deque
 
-from .types import Action
+from ..core.types import Action
 
 DEAD = "<game over>"  # sink node: edges to it mark moves that killed us
 

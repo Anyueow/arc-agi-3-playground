@@ -14,6 +14,8 @@ from .types import Action
 
 class Agent(ABC):
     name = "agent"
+    tracing = False  # set by the runner when a trace log is being written
+    trace: dict = {}  # filled by choose_action when tracing: what the agent saw, learned, decided
 
     def reset(self) -> None:
         """Called once before a game starts. Clear any per-game state here."""

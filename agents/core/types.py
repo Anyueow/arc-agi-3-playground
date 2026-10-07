@@ -51,6 +51,6 @@ class Observation:
 
     @cached_property
     def objects(self) -> list[Obj]:
-        from .perception import find_objects
+        from ..skills.perceive import find_objects
 
         return find_objects(self.grid)

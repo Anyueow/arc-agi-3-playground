@@ -1,0 +1,15 @@
+{
+  "train": [
+    "ls20"
+  ],
+  "val": [
+    "vc33"
+  ],
+  "iterations": 1,
+  "episodes": 2,
+  "max_actions": 40,
+  "actor_model": "llama3.1:8b",
+  "meta_model": "llama3.1:8b",
+  "proposer_model": "llama3.1:8b",
+  "seed": 0
+}

@@ -1,0 +1,1 @@
+Analyze the game trajectory and provide feedback that will help the player do better next time.

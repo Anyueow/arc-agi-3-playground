@@ -4,8 +4,11 @@
 
 Reads (nothing is written):
   baselines/*.json, benchmarks/results/*.json   results from run_agent.py --save / benchmark.py
-  logs/*.jsonl                                   step-by-step traces from --trace
-  runs/metattl/                                  Meta-TTL training runs and evals
+  logs/*.jsonl, examples/traces/*.jsonl          step-by-step traces from --trace
+  runs/metattl/, examples/metattl/               Meta-TTL training runs and evals
+
+logs/ and runs/ are git-ignored; examples/ holds a few committed samples so a
+cloud deployment has something to show in every tab.
 """
 
 import json
@@ -80,7 +83,7 @@ def leaderboard() -> None:
             "score % (mean over games)": round(float(np.mean([g["mean_score"] for g in games.values()])) if games else 0.0, 4),
         })
     table = pd.DataFrame(rows).sort_values("score % (mean over games)", ascending=False)
-    st.dataframe(table, hide_index=True, use_container_width=True)
+    st.dataframe(table, hide_index=True, width="stretch")
     if len({r.get("max_actions") for r in runs.values()}) > 1:
         st.caption("Runs used different action budgets per game; more actions makes clearing levels easier, "
                    "but the efficiency-based score punishes slow clears.")
@@ -93,17 +96,19 @@ def leaderboard() -> None:
     )
     st.bar_chart(per_game, stack=False, height=380)
     with st.expander("Per-game table"):
-        st.dataframe(per_game, use_container_width=True)
+        st.dataframe(per_game, width="stretch")
 
 
 # -- tab 2: trace viewer ---------------------------------------------------
 
 def trace_viewer() -> None:
-    logs = sorted(Path("logs").glob("*.jsonl"), key=lambda p: p.stat().st_mtime, reverse=True)
+    logs = sorted([*Path("logs").glob("*.jsonl"), *Path("examples/traces").glob("*.jsonl")],
+                  key=lambda p: p.stat().st_mtime, reverse=True)
     if not logs:
         st.info("No traces yet. Run with `--trace`, e.g. `uv run python run_agent.py --agent llm --trace -n 150`.")
         return
-    path = st.selectbox("Trace", [str(p) for p in logs], format_func=lambda p: Path(p).name)
+    path = st.selectbox("Trace", [str(p) for p in logs],
+                        format_func=lambda p: Path(p).name + ("  (example)" if p.startswith("examples") else ""))
     steps = load_trace(path)
     if not steps:
         st.warning("Empty trace.")
@@ -165,20 +170,21 @@ def trace_viewer() -> None:
         with st.expander(f"All {len(thinks)} brain decisions"):
             st.dataframe(pd.DataFrame([{"step": t["step"], "skill": t["think"].get("skill"),
                                         "thought": t["think"].get("thought")} for t in thinks]),
-                         hide_index=True, use_container_width=True)
+                         hide_index=True, width="stretch")
 
 
 # -- tab 3: Meta-TTL -------------------------------------------------------
 
 def metattl_view() -> None:
-    base = Path("runs/metattl")
-    runs = sorted((p for p in base.glob("*") if p.is_dir()), reverse=True) if base.exists() else []
-    evals = sorted(base.glob("eval-*.json"), reverse=True) if base.exists() else []
+    bases = [Path("runs/metattl"), Path("examples/metattl")]
+    runs = sorted((p for b in bases for p in b.glob("*") if p.is_dir()), reverse=True)
+    evals = sorted((p for b in bases for p in b.glob("eval-*.json")), reverse=True)
     if not runs and not evals:
         st.info("No Meta-TTL runs yet. `uv run python meta_ttl.py train --iterations 3`.")
         return
     if runs:
-        run = st.selectbox("Training run", [str(p) for p in runs], format_func=lambda p: Path(p).name)
+        run = st.selectbox("Training run", [str(p) for p in runs],
+                       format_func=lambda p: Path(p).name + ("  (example)" if p.startswith("examples") else ""))
         run = Path(run)
         if (run / "config.json").exists():
             st.json(json.loads((run / "config.json").read_text()), expanded=False)
@@ -186,7 +192,7 @@ def metattl_view() -> None:
         if log.exists():
             entries = [json.loads(line) for line in log.read_text().splitlines() if line.strip()]
             st.caption("Outer-loop iterations")
-            st.dataframe(pd.DataFrame(entries), hide_index=True, use_container_width=True)
+            st.dataframe(pd.DataFrame(entries), hide_index=True, width="stretch")
         cols = st.columns(2)
         for col, name in zip(cols, ("pool.json", "selection.json")):
             if (run / name).exists():
@@ -199,7 +205,7 @@ def metattl_view() -> None:
     for e in evals:
         data = json.loads(e.read_text())
         st.caption(f"{e.name}: W-AUC by method ({data['episodes']} episodes x {data['max_actions']} actions)")
-        st.dataframe(pd.DataFrame(data["wauc"]), use_container_width=True)
+        st.dataframe(pd.DataFrame(data["wauc"]), width="stretch")
 
 
 st.title("ARC-AGI-3 agent dashboard")
